@@ -58,7 +58,7 @@ app.get("/authorize/:userId", async (req, res) => {
 // Redirect back to user.ejs with userId as query parameter
 app.get("/authorize/redirect/:userId", (req, res) => {
   const { userId } = req.params;
-  res.redirect(`/user/${userId}?q=${userId}`);
+  res.redirect(`/user/?q=${userId}`);
 });
 
 // Final User Page after Authorization (show userId and login confirmation)
