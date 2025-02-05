@@ -56,8 +56,8 @@ app.get("/authorize/:userId", async (req, res) => {
 });
 
 app.get("/user", (req, res) => {
-  const userId = req.query.q; // Extracting the `q` query parameter
-  res.render("user", { userId }); // Pass the `userId` to your view
+  const userId = req.query.q; // Extracting `q` query parameter from the URL
+  res.render("user", { q: userId }); // Passing `q` to the view as a variable
 });
 
 // Redirect back to user.ejs with userId as query parameter

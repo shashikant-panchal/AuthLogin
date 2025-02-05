@@ -8,13 +8,16 @@
 </head>
 <body>
     <div class="container">
+     
+
         <h1>Welcome, User</h1>
 
-        <% if (q) { %>
-            <p>User logged in with userId: <%= q %></p>
-        <% } else { %>
-            <p>No userId found in the query.</p>
-        <% } %>
+<% if (q) { %>
+    <p>User logged in with userId: <%= q %></p>
+<% } else { %>
+    <p>No userId found in the query.</p>
+<% } %>
+
 
     </div>
 </body>
