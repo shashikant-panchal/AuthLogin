@@ -53,10 +53,24 @@ app.get("/user", (req, res) => {
   res.render("user", { q: userId });
 });
 
+// app.get("/authorize/redirect/:userId", (req, res) => {
+//   const { userId } = req.params;
+//   const redirectUri = "myapp://success";
+//   res.redirect(`${redirectUri}?q=${userId}`);
+// });
+
 app.get("/authorize/redirect/:userId", (req, res) => {
   const { userId } = req.params;
-  const redirectUri = "myapp://success";
-  res.redirect(`${redirectUri}?q=${userId}`);
+  const redirectUriMobile = "myapp://success";
+  const redirectUriWeb = "/user";
+  const userAgent = req.headers["user-agent"];
+  const isMobile = /android|iphone|ipad|ipod/i.test(userAgent);
+
+  if (isMobile) {
+    res.redirect(`${redirectUriMobile}?q=${userId}`);
+  } else {
+    res.redirect(`${redirectUriWeb}?q=${userId}`);
+  }
 });
 
 app.get("/user/:userId", async (req, res) => {
