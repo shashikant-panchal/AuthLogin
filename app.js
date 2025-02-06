@@ -47,6 +47,9 @@ app.post("/submit", async (req, res) => {
   res.redirect(`/authorize/${userId}`);
 });
 
+// Serve .well-known folder
+app.use("/.well-known", express.static(path.join(__dirname, ".well-known")));
+
 // Authorize Route (shows the Authorize button)
 app.get("/authorize/:userId", async (req, res) => {
   const { userId } = req.params;
