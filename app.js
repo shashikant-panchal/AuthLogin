@@ -61,7 +61,7 @@ app.get("/user", (req, res) => {
 
 app.get("/authorize/redirect/:userId", (req, res) => {
   const { userId } = req.params;
-  const redirectUriMobile = "myapp://success";
+  const redirectUriMobile = "user";
   const redirectUriWeb = "/user";
   const userAgent = req.headers["user-agent"];
   const isMobile = /android|iphone|ipad|ipod/i.test(userAgent);
