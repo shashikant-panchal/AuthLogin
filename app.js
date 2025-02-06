@@ -64,9 +64,29 @@ app.get("/user", (req, res) => {
 });
 
 // Redirect back to user.ejs with userId as query parameter
+// app.get("/authorize/redirect/:userId", (req, res) => {
+//   const { userId } = req.params;
+//   res.redirect(`/user/?q=${userId}`);
+// });
+
 app.get("/authorize/redirect/:userId", (req, res) => {
   const { userId } = req.params;
-  res.redirect(`/user/?q=${userId}`);
+
+  res.send(`
+    <html>
+      <head>
+        <script>
+          setTimeout(() => {
+            window.location.href = "/user/?q=${userId}";
+          }, 1000); // Optional delay before redirection
+        </script>
+      </head>
+      <body>
+        <h2>Authorization Successful</h2>
+        <p>You will be redirected shortly...</p>
+      </body>
+    </html>
+  `);
 });
 
 // Final User Page after Authorization (show userId and login confirmation)
