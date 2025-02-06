@@ -76,14 +76,19 @@ app.get("/authorize/redirect/:userId", (req, res) => {
     <html>
       <head>
         <script>
+          // Send success message back to In-App Browser and close it
           setTimeout(() => {
-            window.location.href = "/user/?q=${userId}";
-          }, 1000); // Optional delay before redirection
+            if (window.ReactNativeWebView) {
+              window.ReactNativeWebView.postMessage("SUCCESS");
+            } else {
+              window.location.href = "/user/?q=${userId}"; 
+            }
+          }, 1500); // 1.5 sec delay for better UX
         </script>
       </head>
       <body>
         <h2>Authorization Successful</h2>
-        <p>You will be redirected shortly...</p>
+        <p>You are being redirected...</p>
       </body>
     </html>
   `);
