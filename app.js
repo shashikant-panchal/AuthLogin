@@ -69,29 +69,39 @@ app.get("/user", (req, res) => {
 //   res.redirect(`/user/?q=${userId}`);
 // });
 
+// app.get("/authorize/redirect/:userId", (req, res) => {
+//   const { userId } = req.params;
+
+//   res.send(`
+//     <html>
+//       <head>
+//         <script>
+//           // Send success message back to In-App Browser and close it
+//           setTimeout(() => {
+//             if (window.ReactNativeWebView) {
+//               window.ReactNativeWebView.postMessage("SUCCESS");
+//             } else {
+//               window.location.href = "/user/?q=${userId}";
+//             }
+//           }, 1500); // 1.5 sec delay for better UX
+//         </script>
+//       </head>
+//       <body>
+//         <h2>Authorization Successful</h2>
+//         <p>You are being redirected...</p>
+//       </body>
+//     </html>
+//   `);
+// });
+
 app.get("/authorize/redirect/:userId", (req, res) => {
   const { userId } = req.params;
 
-  res.send(`
-    <html>
-      <head>
-        <script>
-          // Send success message back to In-App Browser and close it
-          setTimeout(() => {
-            if (window.ReactNativeWebView) {
-              window.ReactNativeWebView.postMessage("SUCCESS");
-            } else {
-              window.location.href = "/user/?q=${userId}"; 
-            }
-          }, 1500); // 1.5 sec delay for better UX
-        </script>
-      </head>
-      <body>
-        <h2>Authorization Successful</h2>
-        <p>You are being redirected...</p>
-      </body>
-    </html>
-  `);
+  // Ensure redirectUri is correctly defined in frontend
+  const redirectUri = "myapp://success"; // Use your deep link scheme
+
+  // Redirect to deep link
+  res.redirect(`${redirectUri}?q=${userId}`);
 });
 
 // Final User Page after Authorization (show userId and login confirmation)
