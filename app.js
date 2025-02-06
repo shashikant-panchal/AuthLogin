@@ -97,10 +97,8 @@ app.get("/user", (req, res) => {
 app.get("/authorize/redirect/:userId", (req, res) => {
   const { userId } = req.params;
 
-  // Ensure redirectUri is correctly defined in frontend
-  const redirectUri = "myapp://success"; // Use your deep link scheme
-
-  // Redirect to deep link
+  // Redirect to deep link so React Native detects it
+  const redirectUri = "myapp://success";
   res.redirect(`${redirectUri}?q=${userId}`);
 });
 
