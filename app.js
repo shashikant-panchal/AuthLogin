@@ -41,17 +41,13 @@ app.post("/submit", async (req, res) => {
 app.use("/.well-known", express.static(path.join(__dirname, ".well-known")));
 
 app.get("/authorize/:userId", async (req, res) => {
-  const userId =
-    "FObVkPNGj1xjeiXFhKBCKn1TUjbdfzmNsO%2b4tH7q6Ko6NmO5kwpfZp9Tj2dw2Td2C68js0K2d2eqy%2fDxzPB7FCZ3aPABBd%2f74wku03lKWpUIxN6uAcduqbZrkLmIrDXWKshkyIeif0HcnL20dDR%2fRA%3d%3d";
+  const userId = req.params.userId;
   const { deviceType } = req.query;
+  console.log("Received deviceType:", deviceType);
+  console.log("Received userId:", userId);
 
   if (deviceType) {
-    if (
-      deviceType === "android" ||
-      deviceType === "iphone" ||
-      deviceType === "ipad" ||
-      deviceType === "ipod"
-    ) {
+    if (deviceType === "android") {
       res.redirect(`saksham://success?q=${userId}`);
     } else if (deviceType === "web") {
       res.redirect(`/user?q=${userId}`);
