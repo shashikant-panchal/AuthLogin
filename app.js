@@ -35,9 +35,6 @@ app.post("/submit", async (req, res) => {
   const userId =
     "FObVkPNGj1xjeiXFhKBCKn1TUjbdfzmNsO%2b4tH7q6Ko6NmO5kwpfZp9Tj2dw2Td2C68js0K2d2eqy%2fDxzPB7FCZ3aPABBd%2f74wku03lKWpUIxN6uAcduqbZrkLmIrDXWKshkyIeif0HcnL20dDR%2fRA%3d%3d";
 
-  // const newUser = new User({ userId });
-  // await newUser.save();
-
   res.redirect(`/authorize/${userId}`);
 });
 
@@ -46,21 +43,25 @@ app.use("/.well-known", express.static(path.join(__dirname, ".well-known")));
 app.get("/authorize/:userId", async (req, res) => {
   const userId =
     "FObVkPNGj1xjeiXFhKBCKn1TUjbdfzmNsO%2b4tH7q6Ko6NmO5kwpfZp9Tj2dw2Td2C68js0K2d2eqy%2fDxzPB7FCZ3aPABBd%2f74wku03lKWpUIxN6uAcduqbZrkLmIrDXWKshkyIeif0HcnL20dDR%2fRA%3d%3d";
+  const { deviceType } = req.query;
 
-  res.render("authorize", { userId });
+  if (deviceType) {
+    if (
+      deviceType === "android" ||
+      deviceType === "iphone" ||
+      deviceType === "ipad" ||
+      deviceType === "ipod"
+    ) {
+      res.redirect(`saksham://success?q=${userId}`);
+    } else if (deviceType === "web") {
+      res.redirect(`/user?q=${userId}`);
+    } else {
+      res.status(400).send("Invalid device type");
+    }
+  } else {
+    res.status(400).send("Device type is required");
+  }
 });
-
-app.get("/user", (req, res) => {
-  const userId =
-    "FObVkPNGj1xjeiXFhKBCKn1TUjbdfzmNsO%2b4tH7q6Ko6NmO5kwpfZp9Tj2dw2Td2C68js0K2d2eqy%2fDxzPB7FCZ3aPABBd%2f74wku03lKWpUIxN6uAcduqbZrkLmIrDXWKshkyIeif0HcnL20dDR%2fRA%3d%3d";
-  res.render("user", { q: userId });
-});
-
-// app.get("/authorize/redirect/:userId", (req, res) => {
-//   const { userId } = req.params;
-//   const redirectUri = "myapp://success";
-//   res.redirect(`${redirectUri}?q=${userId}`);
-// });
 
 app.get("/authorize/redirect/:userId", (req, res) => {
   const userId =
@@ -69,6 +70,7 @@ app.get("/authorize/redirect/:userId", (req, res) => {
   const redirectUriWeb = "/user";
   const userAgent = req.headers["user-agent"];
   const isMobile = /android|iphone|ipad|ipod/i.test(userAgent);
+
   if (isMobile) {
     res.redirect(`${redirectUriMobile}?q=${userId}`);
   } else {
