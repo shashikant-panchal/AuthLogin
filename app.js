@@ -47,7 +47,7 @@ app.get("/authorize/:userId", async (req, res) => {
   console.log("Received userId:", userId);
 
   if (deviceType) {
-    if (deviceType === "android") {
+    if (deviceType === "mobile") {
       res.redirect(`saksham://success?q=${userId}`);
     } else if (deviceType === "web") {
       res.redirect(`/user?q=${userId}`);
