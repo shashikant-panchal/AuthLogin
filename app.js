@@ -32,8 +32,7 @@ app.get("/", (req, res) => {
 });
 
 app.post("/submit", async (req, res) => {
-  const userId =
-    "FObVkPNGj1xjeiXFhKBCKn1TUjbdfzmNsO%2b4tH7q6Ko6NmO5kwpfZp9Tj2dw2Td2C68js0K2d2eqy%2fDxzPB7FCZ3aPABBd%2f74wku03lKWpUIxN6uAcduqbZrkLmIrDXWKshkyIeif0HcnL20dDR%2fRA%3d%3d";
+  const userId = req.body.userId;
 
   const newUser = new User({ userId });
   await newUser.save();
@@ -61,8 +60,7 @@ app.get("/user", (req, res) => {
 // });
 
 app.get("/authorize/redirect/:userId", (req, res) => {
-  const userId =
-    "FObVkPNGj1xjeiXFhKBCKn1TUjbdfzmNsO%2b4tH7q6Ko6NmO5kwpfZp9Tj2dw2Td2C68js0K2d2eqy%2fDxzPB7FCZ3aPABBd%2f74wku03lKWpUIxN6uAcduqbZrkLmIrDXWKshkyIeif0HcnL20dDR%2fRA%3d%3d";
+  const { userId } = req.params;
   const redirectUriMobile = "myapp://success";
   const redirectUriWeb = "/user";
   const userAgent = req.headers["user-agent"];
