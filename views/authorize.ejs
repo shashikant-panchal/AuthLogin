@@ -11,7 +11,7 @@
         <h1>Authorize Login</h1>
         <p>User ID: <%= userId %></p>
         <!-- Redirect to user.ejs with userId as query parameter -->
-        <form action="/authorize/redirect/<%= userId %>" method="GET">
+        <form action="/authorize/redirect/<%= userId %>?deviceType=web" method="GET">
             <button type="submit">Authorize</button>
         </form>
     </div>
