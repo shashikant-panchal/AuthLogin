@@ -43,8 +43,6 @@ app.use("/.well-known", express.static(path.join(__dirname, ".well-known")));
 app.get("/authorize/:userId", async (req, res) => {
   const userId = req.params.userId;
   const { deviceType } = req.query;
-  console.log("Received deviceType:", deviceType);
-  console.log("Received userId:", userId);
 
   if (deviceType) {
     if (deviceType === "mobile") {
