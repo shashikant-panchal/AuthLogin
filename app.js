@@ -59,20 +59,20 @@ app.get("/authorize/:userId", async (req, res) => {
   }
 });
 
-app.get("/authorize/redirect/:userId", (req, res) => {
-  const userId =
-    "FObVkPNGj1xjeiXFhKBCKn1TUjbdfzmNsO%2b4tH7q6Ko6NmO5kwpfZp9Tj2dw2Td2C68js0K2d2eqy%2fDxzPB7FCZ3aPABBd%2f74wku03lKWpUIxN6uAcduqbZrkLmIrDXWKshkyIeif0HcnL20dDR%2fRA%3d%3d";
-  const redirectUriMobile = "saksham://success";
-  const redirectUriWeb = "/user";
-  const userAgent = req.headers["user-agent"];
-  const isMobile = /android|iphone|ipad|ipod/i.test(userAgent);
+// app.get("/authorize/redirect/:userId", (req, res) => {
+//   const userId =
+//     "FObVkPNGj1xjeiXFhKBCKn1TUjbdfzmNsO%2b4tH7q6Ko6NmO5kwpfZp9Tj2dw2Td2C68js0K2d2eqy%2fDxzPB7FCZ3aPABBd%2f74wku03lKWpUIxN6uAcduqbZrkLmIrDXWKshkyIeif0HcnL20dDR%2fRA%3d%3d";
+//   const redirectUriMobile = "saksham://success";
+//   const redirectUriWeb = "/user";
+//   const userAgent = req.headers["user-agent"];
+//   const isMobile = /android|iphone|ipad|ipod/i.test(userAgent);
 
-  if (isMobile) {
-    res.redirect(`${redirectUriMobile}?q=${userId}`);
-  } else {
-    res.redirect(`${redirectUriWeb}?q=${userId}`);
-  }
-});
+//   if (isMobile) {
+//     res.redirect(`${redirectUriMobile}?q=${userId}`);
+//   } else {
+//     res.redirect(`${redirectUriWeb}?q=${userId}`);
+//   }
+// });
 
 app.get("/user/:userId", async (req, res) => {
   const { userId } = req.params;
