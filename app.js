@@ -40,30 +40,13 @@ app.post("/submit", async (req, res) => {
 
 app.use("/.well-known", express.static(path.join(__dirname, ".well-known")));
 
-// app.get("/authorize/:userId", async (req, res) => {
-//   const userId = req.params.userId;
-//   const { deviceType } = req.query;
-
-//   if (deviceType) {
-//     if (deviceType === "mobile") {
-//       res.redirect(`saksham://success?q=${userId}`);
-//     } else if (deviceType === "web") {
-//       res.redirect(`/user?q=${userId}`);
-//     } else {
-//       res.status(400).send("Invalid device type");
-//     }
-//   } else {
-//     res.status(400).send("Device type is required");
-//   }
-// });
-
 app.get("/authorize/:userId", async (req, res) => {
   const userId = req.params.userId;
   const { deviceType } = req.query;
-  const webDomain = "https://testlogin-gamma.vercel.app/";
+
   if (deviceType) {
     if (deviceType === "mobile") {
-      res.redirect(`${webDomain}/saksham://success?q=${userId}`);
+      res.redirect(`saksham://success?q=${userId}`);
     } else if (deviceType === "web") {
       res.redirect(`/user?q=${userId}`);
     } else {
