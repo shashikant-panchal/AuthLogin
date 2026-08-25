@@ -46,8 +46,7 @@ app.get("/authorize/:userId", async (req, res) => {
 
   if (deviceType) {
     if (deviceType === "mobile") {
-      // res.redirect(`saksham://success?q=${userId}`);
-      res.send('build your own login system')
+      res.redirect(`saksham://success?q=${userId}`);
     } else if (deviceType === "web") {
       res.redirect(`/user?q=${userId}`);
     } else {
