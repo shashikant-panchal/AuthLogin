@@ -16,11 +16,10 @@ mongoose
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.log("Error connecting to MongoDB:", err));
 
-// Schema tracking authorization state and windows
+// Simplified schema without failure or session window tracking
 const userSchema = new mongoose.Schema({
   userId: { type: String, required: true, unique: true },
-  failedAttemptAt: { type: Date, default: null }, // Timestamp of the first intentional failure
-  sessionExpiresAt: { type: Date, default: null }, // Active success window expiration (5 minutes)
+  createdAt: { type: Date, default: Date.now },
 });
 
 const User = mongoose.model("User", userSchema);
@@ -39,7 +38,7 @@ app.post("/submit", async (req, res) => {
 app.use("/.well-known", express.static(path.join(__dirname, ".well-known")));
 
 app.get("/authorize/:userId", async (req, res) => {
-  const userId = req.params.userId;
+  const { userId } = req.params;
   const { deviceType } = req.query;
 
   if (!deviceType) {
@@ -52,47 +51,15 @@ app.get("/authorize/:userId", async (req, res) => {
 
   if (deviceType === "mobile") {
     try {
-      const now = new Date();
-      const FIVE_MINUTES_MS = 5 * 60 * 1000;
+      // Upsert the user to ensure the record exists without failure state checks
+      await User.findOneAndUpdate(
+        { userId },
+        { $setOnInsert: { userId } },
+        { upsert: true, new: true }
+      );
 
-      // Find user or create if not present
-      let user = await User.findOne({ userId });
-      if (!user) {
-        user = new User({ userId });
-      }
-
-      // Check if we are currently inside the active 5-minute success window
-      if (user.sessionExpiresAt && now < user.sessionExpiresAt) {
-        return res.redirect(`saksham://success?q=${userId}`);
-      }
-
-      // If the 5-minute active window has expired, reset state
-      if (user.sessionExpiresAt && now >= user.sessionExpiresAt) {
-        user.sessionExpiresAt = null;
-        user.failedAttemptAt = null;
-      }
-
-      // Check if this is the second attempt within 5 minutes of the initial failure
-      const isSecondAttemptWithinWindow =
-        user.failedAttemptAt &&
-        now - user.failedAttemptAt <= FIVE_MINUTES_MS;
-
-      if (isSecondAttemptWithinWindow) {
-        // Second attempt -> Grant success and open the 5-minute active window
-        user.sessionExpiresAt = new Date(now.getTime() + FIVE_MINUTES_MS);
-        user.failedAttemptAt = null;
-        await user.save();
-
-        return res.redirect(`saksham://success?q=${userId}`);
-      }
-
-      // First attempt (or retry after prolonged inactivity) -> Intentional failure
-      user.failedAttemptAt = now;
-      user.sessionExpiresAt = null;
-      await user.save();
-
-      // Redirect to failure deep link
-      return res.redirect(`saksham://failure?error=authentication_failed&q=${userId}`);
+      // Direct success redirect
+      return res.redirect(`saksham://success?q=${userId}`);
     } catch (err) {
       console.error("Authorization error:", err);
       return res.status(500).send("Internal Server Error");
@@ -105,12 +72,19 @@ app.get("/authorize/:userId", async (req, res) => {
 app.get("/user/:userId", async (req, res) => {
   const { userId } = req.params;
   const { q } = req.query;
-  const user = await User.findOne({ userId });
 
-  if (!user) {
-    return res.status(404).send("User not found");
+  try {
+    const user = await User.findOne({ userId });
+
+    if (!user) {
+      return res.status(404).send("User not found");
+    }
+
+    res.render("user", { userId, q });
+  } catch (err) {
+    console.error("User lookup error:", err);
+    res.status(500).send("Internal Server Error");
   }
-  res.render("user", { userId, q });
 });
 
 const port = process.env.PORT || 3000;
