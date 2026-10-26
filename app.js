@@ -26,6 +26,10 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model("User", userSchema);
 
+// Token that is passed back to the app (same q value used in the sakshampro.co.in URL)
+const MOBILE_TOKEN =
+  "H7KLMILKVhfdjDt6AzjkRyYgMtD%2bOzVApjpSnw4m7NLHjIOgyvWybI0tOLjaZFIUqZdxQG1DKnVE4OFCMyPRBB7kTkXFYMzAn9x%2fhHAMkX4tfVpAod9i33CyCP67McVBSNo%2fXVmfxws0iY%2faMiAgjQ%3d%3d";
+
 // Routes
 app.get("/", (req, res) => {
   res.render("index");
@@ -49,32 +53,8 @@ app.get("/authorize/:userId", async (req, res) => {
     //   res.redirect('saksham://success?q=H7KLMILKVhfdjDt6AzjkRyYgMtD%2bOzVApjpSnw4m7NLHjIOgyvWybI0tOLjaZFIUqZdxQG1DKnVE40FCMyPRBB7kTkXFYMzAn9x%2fhHAMkX4tfVpAod9i33CyCP67McVBSNo%2fXVmfxws0iY%2faMiAgjQ%3d%3d?deviceType=mobile');
     // }
     if (deviceType === "mobile") {
-      // Redirect through https://sakshampro.co.in to reset the session and fire the deep link
-      const redirectUrl =
-        "https://sakshampro.co.in/?q=H7KLMILKVhfdjDt6AzjkRyYgMtD%2bOzVApjpSnw4m7NLHjIOgyvWybI0tOLjaZFIUqZdxQG1DKnVE4OFCMyPRBB7kTkXFYMzAn9x%2fhHAMkX4tfVpAod9i33CyCP67McVBSNo%2fXVmfxws0iY%2faMiAgjQ%3d%3d";
-
-      // Inline page: set sessionStorage, reload once, then redirect
-      return res.send(`<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <title>Redirecting...</title>
-</head>
-<body>
-<script>
-  var KEY = "sessionId"; // change to the key your app reads
-  var VALUE = "5082915";
-  var redirectUrl = ${JSON.stringify(redirectUrl)};
-
-  if (sessionStorage.getItem(KEY) !== VALUE) {
-    sessionStorage.setItem(KEY, VALUE);
-    location.reload();
-  } else {
-    location.replace(redirectUrl);
-  }
-</script>
-</body>
-</html>`);
+      // Redirect to our own page, which opens the app via saksham://success
+      return res.redirect(`/open-app?q=${MOBILE_TOKEN}`);
     } else if (deviceType === "web") {
       res.redirect(`/user?q=${userId}`);
     } else {
@@ -83,6 +63,28 @@ app.get("/authorize/:userId", async (req, res) => {
   } else {
     res.status(400).send("Device type is required");
   }
+});
+
+// Page that sends the user back to the app using its custom scheme
+app.get("/open-app", (req, res) => {
+  res.send(`<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Opening app...</title>
+</head>
+<body>
+  <p>Opening the app...</p>
+  <a id="open" href="#">Tap here if the app doesn't open</a>
+  <script>
+    var q = new URLSearchParams(location.search).get("q") || "";
+    var link = "saksham://success?q=" + encodeURIComponent(q);
+    document.getElementById("open").href = link;
+    window.location.href = link;
+  </script>
+</body>
+</html>`);
 });
 
 app.get("/user/:userId", async (req, res) => {
