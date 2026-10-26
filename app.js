@@ -46,7 +46,7 @@ app.get("/authorize/:userId", async (req, res) => {
     //   res.redirect(`saksham://success?q=${userId}`);
     // }
     if (deviceType === "mobile") {
-      res.redirect(`saksham://success?q=${H7KLMILKVhfdjDt6AzjkRyYgMtD%2bOzVApjpSnw4m7NLHjIOgyvWybI0tOLjaZFIUqZdxQG1DKnVE40FCMyPRBB7kTkXFYMzAn9x%2fhHAMkX4tfVpAod9i33CyCP67McVBSNo%2fXVmfxws0iY%2faMiAgjQ%3d%3d}`);
+      res.redirect(`saksham://success?q=H7KLMILKVhfdjDt6AzjkRyYgMtD%2bOzVApjpSnw4m7NLHjIOgyvWybI0tOLjaZFIUqZdxQG1DKnVE40FCMyPRBB7kTkXFYMzAn9x%2fhHAMkX4tfVpAod9i33CyCP67McVBSNo%2fXVmfxws0iY%2faMiAgjQ%3d%3d?deviceType=mobile`);
     }
     else if (deviceType === "web") {
       res.redirect(`/user?q=${userId}`);
