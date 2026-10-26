@@ -56,7 +56,6 @@ app.get("/authorize/:userId", async (req, res) => {
       // Redirect to our own page, which opens the app via saksham://success
       return res.redirect(`/open-app?q=${MOBILE_TOKEN}`);
     } else if (deviceType === "web") {
-      // Fixed: now matches the /user/:userId route
       res.redirect(
         `/user/${encodeURIComponent(userId)}?q=${encodeURIComponent(userId)}`
       );
@@ -94,17 +93,14 @@ app.get("/user/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
     const { q } = req.query;
+    const user = await User.findOne({ userId });
 
-    // Find the user, or create it if it doesn't exist (never returns "User not found")
-    await User.findOneAndUpdate(
-      { userId },
-      { $setOnInsert: { userId } },
-      { upsert: true, new: true }
-    );
+    if (!user) {
+      return res.status(404).send("User not found");
+    }
 
     res.render("user", { userId, q });
   } catch (error) {
-    console.log("Error in /user route:", error);
     res.status(500).send("Server Error");
   }
 });
