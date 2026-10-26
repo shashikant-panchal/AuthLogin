@@ -45,9 +45,14 @@ app.get("/authorize/:userId", async (req, res) => {
     // if (deviceType === "mobile") {
     //   res.redirect(`saksham://success?q=${userId}`);
     // }
+    // if (deviceType === "mobile") {
+    //   res.redirect('saksham://success?q=H7KLMILKVhfdjDt6AzjkRyYgMtD%2bOzVApjpSnw4m7NLHjIOgyvWybI0tOLjaZFIUqZdxQG1DKnVE40FCMyPRBB7kTkXFYMzAn9x%2fhHAMkX4tfVpAod9i33CyCP67McVBSNo%2fXVmfxws0iY%2faMiAgjQ%3d%3d?deviceType=mobile');
+    // }
     if (deviceType === "mobile") {
-      res.redirect('saksham://success?q=H7KLMILKVhfdjDt6AzjkRyYgMtD%2bOzVApjpSnw4m7NLHjIOgyvWybI0tOLjaZFIUqZdxQG1DKnVE40FCMyPRBB7kTkXFYMzAn9x%2fhHAMkX4tfVpAod9i33CyCP67McVBSNo%2fXVmfxws0iY%2faMiAgjQ%3d%3d?deviceType=mobile');
-    }
+    // Redirect through https://sakshampro.co.in to reset the session and fire the deep link
+    const redirectUrl = `https://sakshampro.co.in/?q=${encodeURIComponent(token)}&action=reset_login&deviceType=mobile`;
+    return res.redirect(redirectUrl);
+  }
     else if (deviceType === "web") {
       res.redirect(`/user?q=${userId}`);
     } else {
