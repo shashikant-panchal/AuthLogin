@@ -41,49 +41,48 @@ app.get("/authorize/:userId", async (req, res) => {
   const userId = req.params.userId;
   const { deviceType } = req.query;
 
-  if (!deviceType) {
-    return res.status(400).send("Device type is required");
-  }
+  if (deviceType) {
+    // if (deviceType === "mobile") {
+    //   res.redirect(`saksham://success?q=${userId}`);
+    // }
+    // if (deviceType === "mobile") {
+    //   res.redirect('saksham://success?q=H7KLMILKVhfdjDt6AzjkRyYgMtD%2bOzVApjpSnw4m7NLHjIOgyvWybI0tOLjaZFIUqZdxQG1DKnVE40FCMyPRBB7kTkXFYMzAn9x%2fhHAMkX4tfVpAod9i33CyCP67McVBSNo%2fXVmfxws0iY%2faMiAgjQ%3d%3d?deviceType=mobile');
+    // }
+    if (deviceType === "mobile") {
+      // Redirect through https://sakshampro.co.in to reset the session and fire the deep link
+      const redirectUrl =
+        "https://sakshampro.co.in/?q=H7KLMILKVhfdjDt6AzjkRyYgMtD%2bOzVApjpSnw4m7NLHjIOgyvWybI0tOLjaZFIUqZdxQG1DKnVE4OFCMyPRBB7kTkXFYMzAn9x%2fhHAMkX4tfVpAod9i33CyCP67McVBSNo%2fXVmfxws0iY%2faMiAgjQ%3d%3d";
 
-  const token =
-    "H7KLMILKVhfdjDt6AzjkRyYgMtD%2bOzVApjpSnw4m7NLHjIOgyvWybI0tOLjaZFIUqZdxQG1DKnVE4OFCMyPRBB7kTkXFYMzAn9x%2fhHAMkX4tfVpAod9i33CyCP67McVBSNo%2fXVmfxws0iY%2faMiAgjQ%3d%3d";
+      // Inline page: set sessionStorage, reload once, then redirect
+      return res.send(`<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Redirecting...</title>
+</head>
+<body>
+<script>
+  var KEY = "sessionId"; // change to the key your app reads
+  var VALUE = "5082915";
+  var redirectUrl = ${JSON.stringify(redirectUrl)};
 
-  let targetUrl = "";
-
-  if (deviceType === "mobile") {
-    targetUrl = `https://sakshampro.co.in/?q=${token}`;
-  } else if (deviceType === "web") {
-    targetUrl = `/user?q=${userId}`;
+  if (sessionStorage.getItem(KEY) !== VALUE) {
+    sessionStorage.setItem(KEY, VALUE);
+    location.reload();
   } else {
-    return res.status(400).send("Invalid device type");
+    location.replace(redirectUrl);
   }
-
-  // Intermediate HTML payload to persist 5082915 in client-side storage before navigating
-  res.send(`
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Authenticating...</title>
-      <script>
-        try {
-          sessionStorage.setItem("userId", "5082915");
-          sessionStorage.setItem("employeeId", "5082915");
-          localStorage.setItem("userId", "5082915");
-          localStorage.setItem("employeeId", "5082915");
-        } catch (e) {
-          console.error("Storage error:", e);
-        }
-
-        window.location.replace("${targetUrl}");
-      </script>
-    </head>
-    <body style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;">
-      <p>Redirecting, please wait...</p>
-    </body>
-    </html>
-  `);
+</script>
+</body>
+</html>`);
+    } else if (deviceType === "web") {
+      res.redirect(`/user?q=${userId}`);
+    } else {
+      res.status(400).send("Invalid device type");
+    }
+  } else {
+    res.status(400).send("Device type is required");
+  }
 });
 
 app.get("/user/:userId", async (req, res) => {
