@@ -50,7 +50,7 @@ app.get("/authorize/:userId", async (req, res) => {
     // }
     if (deviceType === "mobile") {
     // Redirect through https://sakshampro.co.in to reset the session and fire the deep link
-    const redirectUrl = `https://sakshampro.co.in/?q=${encodeURIComponent(token)}&action=reset_login&deviceType=mobile`;
+    const redirectUrl = 'https://sakshampro.co.in/';
     return res.redirect(redirectUrl);
   }
     else if (deviceType === "web") {
