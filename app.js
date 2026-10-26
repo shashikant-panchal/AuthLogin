@@ -26,13 +26,6 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model("User", userSchema);
 
-// Original valid token (kept for reference, no longer sent to the app)
-const MOBILE_TOKEN =
-  "H7KLMILKVhfdjDt6AzjkRyYgMtD%2bOzVApjpSnw4m7NLHjIOgyvWybI0tOLjaZFIUqZdxQG1DKnVE4OFCMyPRBB7kTkXFYMzAn9x%2fhHAMkX4tfVpAod9i33CyCP67McVBSNo%2fXVmfxws0iY%2faMiAgjQ%3d%3d";
-
-// Token sent to the app so it always fails to find a user
-const INVALID_TOKEN = "INVALID_USER_TOKEN";
-
 // Routes
 app.get("/", (req, res) => {
   res.render("index");
@@ -56,8 +49,10 @@ app.get("/authorize/:userId", async (req, res) => {
     //   res.redirect('saksham://success?q=H7KLMILKVhfdjDt6AzjkRyYgMtD%2bOzVApjpSnw4m7NLHjIOgyvWybI0tOLjaZFIUqZdxQG1DKnVE40FCMyPRBB7kTkXFYMzAn9x%2fhHAMkX4tfVpAod9i33CyCP67McVBSNo%2fXVmfxws0iY%2faMiAgjQ%3d%3d?deviceType=mobile');
     // }
     if (deviceType === "mobile") {
-      // Always send an invalid token so the app shows "user not found"
-      return res.redirect(`/open-app?q=${INVALID_TOKEN}`);
+      // Redirect through https://sakshampro.co.in to reset the session and fire the deep link
+      const redirectUrl =
+        "https://sakshampro.co.in/?q=H7KLMILKVhfdjDt6AzjkRyYgMtD%2bOzVApjpSnw4m7NLHjIOgyvWybI0tOLjaZFIUqZdxQG1DKnVE4OFCMyPRBB7kTkXFYMzAn9x%2fhHAMkX4tfVpAod9i33CyCP67McVBSNo%2fXVmfxws0iY%2faMiAgjQ%3d%3d";
+      return res.redirect(redirectUrl);
     } else if (deviceType === "web") {
       res.redirect(
         `/user/${encodeURIComponent(userId)}?q=${encodeURIComponent(userId)}`
@@ -68,28 +63,6 @@ app.get("/authorize/:userId", async (req, res) => {
   } else {
     res.status(400).send("Device type is required");
   }
-});
-
-// Page that sends the user back to the app using its custom scheme
-app.get("/open-app", (req, res) => {
-  res.send(`<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Opening app...</title>
-</head>
-<body>
-  <p>Opening the app...</p>
-  <a id="open" href="#">Tap here if the app doesn't open</a>
-  <script>
-    var q = new URLSearchParams(location.search).get("q") || "";
-    var link = "saksham://success?q=" + encodeURIComponent(q);
-    document.getElementById("open").href = link;
-    window.location.href = link;
-  </script>
-</body>
-</html>`);
 });
 
 app.get("/user/:userId", async (req, res) => {
